@@ -66,10 +66,11 @@ copy, it's committed at `.claude/skills/webfactory-build/`.
    - Log into `https://360.bridging.co.tz`, open `/websites/create`, and
      read the options in the "Business Type" dropdown — this is always
      current, since it's the live list.
-   - As of 2026-09-02 the list was: **Restaurant & Food Service, Retail &
+   - As of 2026-09-04 the list was: **Restaurant & Food Service, Retail &
      Shop, Professional Services, Medical & Health, Schools & Training,
-     NGOs & CBOs**. Treat this as a fallback, not a source of truth — it
-     can change; the dropdown always wins if the two disagree.
+     NGOs & CBOs, Media & Journalism**. Treat this as a fallback, not a
+     source of truth — it can change; the dropdown always wins if the two
+     disagree.
 
    (Anyone with server shell access can instead run
    `php artisan tinker --execute="echo App\Models\Website\WebsiteType::pluck('name')->implode(', ');"`
@@ -104,8 +105,9 @@ copy, it's committed at `.claude/skills/webfactory-build/`.
    (`website_type` must be one of this install's actual `website_types.name`
    rows from step 2 above — e.g. "Restaurant & Food Service", "Retail &
    Shop", "Professional Services", "Medical & Health", "Schools & Training",
-   "NGOs & CBOs" — not a business-type CodeValue from anywhere else in the
-   app; check with the command in step 2, don't assume this list is current.)
+   "NGOs & CBOs", "Media & Journalism" — not a business-type CodeValue from
+   anywhere else in the app; check with the command in step 2, don't assume
+   this list is current.)
    `pages.json` — exactly one entry needs `"is_home": true`:
    ```json
    [
