@@ -1,8 +1,8 @@
 {
   "name": "webfactory-build-skill",
   "owner": {
-    "name": "<team/org name>",
-    "email": "<contact email>"
+    "name": "Bridging Technologies Limited",
+    "email": "digital@bridging.co.tz"
   },
   "plugins": [
     {
