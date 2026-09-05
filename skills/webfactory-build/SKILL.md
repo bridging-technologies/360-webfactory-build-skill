@@ -181,6 +181,7 @@ you just use the markup it looks for.
 | `data-wbx-auto-nav="1"` | a `<nav>`/container | Filled with real `<a>` links to this site's actual pages, current page marked `class="active"` |
 | `data-wbx-source="products"` + `data-wbx-limit="6"` | a container | Filled with the team's real for-sale, active products (image, name, price), each linking to its live product detail page |
 | `data-wbx-source="services"` | a container | Filled with the team's real published services |
+| `data-wbx-source="blog"` + `data-wbx-limit="3"` | a container | Filled with the team's real published blog posts (image, title, summary, date), each linking to its live post page |
 | `data-wbx-lang-switch="1"` | a container | Links between this page's locale siblings (removed entirely if there's only one locale) |
 | `data-hide-on="mobile"` / `data-hide-on="desktop"` | any element | CSS-only responsive visibility, already in `_base_styles.blade.php` |
 | `data-show-after="Y-m-d\TH:i"` / `data-show-until="…"` | any element | Element is dropped server-side outside that window |
