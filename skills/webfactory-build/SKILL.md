@@ -141,16 +141,33 @@ copy, it's committed at `.claude/skills/webfactory-build/`.
 
    **B. CLI import (only if you have shell access to the app server):**
    ```
-   php artisan website:import webfactory-drafts/<slug>.json --team=<team_id>
+   php artisan website:import webfactory-drafts/<slug>.json --team=<team-slug>
    ```
-   Prints the new website's id and edit URL. Faster for anyone already on
-   the server (e.g. scripting several imports at once), but not required —
-   path A does exactly the same thing through the browser.
+   `--team` takes the team's **slug** (the same one in its 360 URLs), not a
+   numeric id. Prints the new website's id and edit URL. Faster for anyone
+   already on the server (e.g. scripting several imports at once), but not
+   required — path A does exactly the same thing through the browser.
 
    Either way: this creates real rows for whichever team owns the import —
    confirm which team/account before importing under someone else's login,
    don't guess. It always lands as a **draft**; nothing here ever publishes
    or touches billing.
+
+   **Updating an already-imported site** (CLI only): after editing your
+   local `.html`/`.css`/`pages.json` and re-running `assemble.php`, re-run
+   the import with `--update=<website id or slug>` instead of creating a
+   duplicate site:
+   ```
+   php artisan website:import webfactory-drafts/<slug>.json --team=<team-slug> --update=<website-slug>
+   ```
+   This upserts pages by slug — existing pages get their draft content
+   refreshed, pages not seen before are added, and nothing not in the file
+   is removed unless you also pass `--prune-pages`. It only ever touches
+   the **draft** version of each page, so a live published page keeps
+   showing its old content until you re-publish from the editor. There is
+   no browser-based equivalent yet — updating an existing site currently
+   requires CLI/server access; without it, re-edit by hand in the GrapesJS
+   canvas instead of re-importing.
 
 7. **Hand it back**: open the new draft's edit page to eyeball it, tweak
    anything by hand in the GrapesJS canvas, then publish through the normal
@@ -169,7 +186,7 @@ which **silently strips**, not errors on:
 So: **no inline JavaScript, ever** — it will vanish without warning. All
 interactivity comes from the markers below, which the public renderer
 (`PublicWebsiteController::renderPageHtml()`) expands server-side at
-request time, and from `public_html/js/website-public-runtime.js`
+request time, and from `public_html/js/website-runtime.js`
 (mobile nav, sliders, reveal animations, form submission), which is
 already wired into every page — you don't add a `<script>` tag for it,
 you just use the markup it looks for.
@@ -185,6 +202,24 @@ you just use the markup it looks for.
 | `data-wbx-lang-switch="1"` | a container | Links between this page's locale siblings (removed entirely if there's only one locale) |
 | `data-hide-on="mobile"` / `data-hide-on="desktop"` | any element | CSS-only responsive visibility, already in `_base_styles.blade.php` |
 | `data-show-after="Y-m-d\TH:i"` / `data-show-until="…"` | any element | Element is dropped server-side outside that window |
+
+**Photo gallery with lightbox** — copy this shape exactly (the `wbx-gallery-trigger`
+button classes are what `website-runtime.js` hooks to open the popup viewer;
+plain `<img>` tags with no wrapper button will just render as static images):
+```html
+<section class="wbx-gallery">
+  <div class="wbx-grid">
+    <div class="wbx-item"><button type="button" class="wbx-gallery-trigger" aria-label="View photo 1"><img src="https://..." alt="..."></button></div>
+    <div class="wbx-item"><button type="button" class="wbx-gallery-trigger" aria-label="View photo 2"><img src="https://..." alt="..."></button></div>
+  </div>
+</section>
+```
+Any number of `.wbx-item` entries works. Clicking a photo opens a full-screen
+popup with prev/next arrows that cycle through the other photos in that same
+`.wbx-grid` (Escape closes, click-outside closes); multiple galleries on one
+page each get their own independent prev/next cycle. All styling
+(`.wbx-gallery`, `.wbx-lightbox-*`) already lives in `_base_styles.blade.php`
+and the GrapesJS "Image Gallery" block — no CSS of your own needed.
 
 **Contact/newsletter/booking forms** — copy this shape exactly (honeypot
 included, off-screen via the `.wbx-hp` class already defined site-wide):
@@ -235,7 +270,7 @@ well-formed with zero risk at all:
 php artisan tinker --execute="
 DB::beginTransaction();
 try {
-    \$code = Artisan::call('website:import', ['file' => 'webfactory-drafts/<slug>.json', '--team' => <team_id>]);
+    \$code = Artisan::call('website:import', ['file' => 'webfactory-drafts/<slug>.json', '--team' => '<team-slug>']);
     echo Artisan::output();
 } finally {
     DB::rollBack();
