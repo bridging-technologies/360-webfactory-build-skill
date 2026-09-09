@@ -13,7 +13,14 @@
  *
  * <site-dir> must contain:
  *   site.json   — {name, brand_color, website_type, website_template?,
- *                  sitemap_enabled?, robots_directive?}
+ *                  sitemap_enabled?, robots_directive?, header_style?}
+ *                  header_style: "none" if a page brings its own complete
+ *                  <header>/<nav>/<footer> (the common shape for a hand-
+ *                  built single-page site) — otherwise the platform's own
+ *                  auto-generated nav/footer wraps around it too, doubling
+ *                  both. Omit for a page that expects the platform chrome
+ *                  (classic/centered/dark/transparent/modern, default
+ *                  "classic").
  *   pages.json  — [{slug, title, is_home, sort_order, meta_title?,
  *                   meta_description?, canonical_url?, html_file, css_file?}, ...]
  *   the html_file/css_file paths referenced above, relative to <site-dir>
@@ -127,6 +134,7 @@ $payload = [
         'favicon_path'     => $site['favicon_path'] ?? null,
         'sitemap_enabled'  => $site['sitemap_enabled'] ?? true,
         'robots_directive' => $site['robots_directive'] ?? 'index,follow',
+        'header_style'     => $site['header_style'] ?? null,
         'website_type'     => $site['website_type'],
         'website_template' => $site['website_template'] ?? null,
     ],

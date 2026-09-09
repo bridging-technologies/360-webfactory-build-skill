@@ -99,7 +99,8 @@ copy, it's committed at `.claude/skills/webfactory-build/`.
      "brand_color": "#0d6efd",
      "website_type": "Professional Services",
      "sitemap_enabled": true,
-     "robots_directive": "index,follow"
+     "robots_directive": "index,follow",
+     "header_style": "none"
    }
    ```
    (`website_type` must be one of this install's actual `website_types.name`
@@ -108,6 +109,15 @@ copy, it's committed at `.claude/skills/webfactory-build/`.
    "NGOs & CBOs", "Media & Journalism" — not a business-type CodeValue from
    anywhere else in the app; check with the command in step 2, don't assume
    this list is current.)
+
+   `header_style` is optional (default `"classic"`, one of `none` /
+   `classic` / `centered` / `dark` / `transparent` / `modern`). **Set it to
+   `"none"` whenever a page's own HTML already includes a complete
+   `<header>`/`<nav>`/`<footer>`** — the common shape for a hand-built
+   single-page site with anchor links (`#about`, `#contact`, ...). Leaving
+   this unset for such a page means the platform's own auto-generated
+   nav/footer wraps around the page's own, producing a visibly duplicated
+   header and footer.
    `pages.json` — exactly one entry needs `"is_home": true`:
    ```json
    [
@@ -153,21 +163,28 @@ copy, it's committed at `.claude/skills/webfactory-build/`.
    don't guess. It always lands as a **draft**; nothing here ever publishes
    or touches billing.
 
-   **Updating an already-imported site** (CLI only): after editing your
-   local `.html`/`.css`/`pages.json` and re-running `assemble.php`, re-run
-   the import with `--update=<website id or slug>` instead of creating a
-   duplicate site:
+   **Updating an already-imported site**: after editing your local
+   `.html`/`.css`/`pages.json` and re-running `assemble.php`, re-import
+   onto the SAME website instead of creating a duplicate — pick whichever
+   access matches:
+
+   **A. Browser (no server access needed):** open that website's editor
+   (`/websites/{id}/edit`) and click **Import Update** in the toolbar —
+   upload the freshly-assembled `.json` file there. "Also remove pages
+   that exist here but aren't in the file" is unchecked by default (safe:
+   nothing gets deleted unless you opt in).
+
+   **B. CLI (server access):**
    ```
    php artisan website:import webfactory-drafts/<slug>.json --team=<team-slug> --update=<website-slug>
    ```
-   This upserts pages by slug — existing pages get their draft content
-   refreshed, pages not seen before are added, and nothing not in the file
-   is removed unless you also pass `--prune-pages`. It only ever touches
-   the **draft** version of each page, so a live published page keeps
-   showing its old content until you re-publish from the editor. There is
-   no browser-based equivalent yet — updating an existing site currently
-   requires CLI/server access; without it, re-edit by hand in the GrapesJS
-   canvas instead of re-importing.
+   `--prune-pages` is that command's equivalent of the browser form's
+   checkbox.
+
+   Either path upserts pages by slug — existing pages get their draft
+   content refreshed, pages not seen before are added — and only ever
+   touches the **draft** version of each page, so a live published page
+   keeps showing its old content until you re-publish from the editor.
 
 7. **Hand it back**: open the new draft's edit page to eyeball it, tweak
    anything by hand in the GrapesJS canvas, then publish through the normal
